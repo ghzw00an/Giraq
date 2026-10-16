@@ -8,174 +8,298 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.18.0/dist/leaflet-geoman.css">
 <style>
-:root{--bg:#0e1c25;--panel:#172a36;--panel2:#203744;--line:#304956;--text:#edf5f6;--muted:#a8bdc5;--accent:#40c3ad;--accent2:#168d83;--danger:#ef6262;--gold:#e5b75b}
+:root{--bg:#0e1c25;--panel:#172a36;--panel2:#203744;--line:#304956;--text:#edf5f6;--muted:#a8bdc5;--accent:#40c3ad;--accent2:#168d83;--danger:#ef6262;--gold:#e5b75b;--blue:#4a90e2;--gray:#a8bdc5}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text)}
 header{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#10212b;border-bottom:1px solid var(--line);gap:12px}
 .brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--accent),#147d7a);display:grid;place-items:center;font-size:23px;box-shadow:0 6px 18px #0003}.brand h1{font-size:18px;margin:0}.brand p{font-size:11px;color:var(--muted);margin:3px 0 0}
-.top-actions{display:flex;gap:8px;align-items:center}.btn{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:var(--panel2);color:var(--text);font:inherit;font-size:13px;cursor:pointer;transition:.15s}.btn:hover{border-color:var(--accent);transform:translateY(-1px)}.btn.primary{background:var(--accent);color:#08242a;border-color:var(--accent);font-weight:700}.btn.danger{color:#ffb4b4}.btn.small{padding:7px 9px;font-size:12px}
-.layout{display:grid;grid-template-columns:330px 1fr;height:calc(100vh - 68px);min-height:550px}.sidebar{overflow:auto;background:var(--panel);border-left:1px solid var(--line);padding:16px}.map-wrap{position:relative;min-width:0}#map{height:100%;width:100%;background:#d7e5e3}
-.section{border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:12px;background:#142630}.section h2{font-size:14px;margin:0 0 12px;display:flex;align-items:center;gap:8px}.section h2 span{color:var(--accent)}.field{margin-bottom:10px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field input,.field select,.field textarea{width:100%;background:#0e1c25;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;font:inherit;font-size:13px;outline:none}.field input:focus,.field select:focus{border-color:var(--accent)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actions{display:flex;gap:7px;flex-wrap:wrap}.hint{font-size:11px;line-height:1.7;color:var(--muted);margin:9px 0 0}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{padding:11px;background:#0e1c25;border:1px solid var(--line);border-radius:11px}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{display:block;margin-top:5px;font-size:17px;direction:ltr;text-align:right;overflow-wrap:anywhere}.stat em{font-style:normal;color:var(--muted);font-size:10px}
-#featureList{display:flex;flex-direction:column;gap:7px;max-height:230px;overflow:auto}.feature{display:flex;align-items:center;gap:8px;padding:9px;border-radius:10px;background:#0e1c25;border:1px solid var(--line)}.feature .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex-shrink:0}.feature .meta{min-width:0;flex:1}.feature b{font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.feature small{font-size:10px;color:var(--muted)}.feature button{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:16px}
-.map-badge{position:absolute;z-index:500;top:12px;left:12px;background:#10212beF;color:var(--text);border:1px solid #ffffff2a;border-radius:12px;padding:10px 13px;font-size:12px;box-shadow:0 6px 22px #0002}.map-badge strong{color:var(--accent)}.legend{position:absolute;z-index:500;bottom:18px;left:12px;background:#10212beF;border:1px solid #ffffff2a;border-radius:12px;padding:10px 12px;font-size:11px;color:var(--muted)}.legend span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-left:5px}.toast{position:fixed;z-index:2000;bottom:20px;right:50%;transform:translateX(50%);background:#0d252d;border:1px solid var(--accent);color:var(--text);border-radius:12px;padding:12px 18px;box-shadow:0 10px 35px #0004;display:none;font-size:13px;max-width:90vw}.empty{color:var(--muted);font-size:12px;text-align:center;padding:16px 8px;border:1px dashed var(--line);border-radius:10px}
+.top-actions{display:flex;gap:8px;align-items:center}.btn{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:var(--panel2);color:var(--text);font:inherit;font-size:13px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:5px}.btn:hover{border-color:var(--accent);transform:translateY(-1px)}.btn.primary{background:var(--accent);color:#08242a;border-color:var(--accent);font-weight:700}.btn.danger{color:#ffb4b4}.btn.small{padding:7px 9px;font-size:12px}
+.layout{display:grid;grid-template-columns:350px 1fr;height:calc(100vh - 68px);min-height:550px}.sidebar{overflow:hidden;background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column}.map-wrap{position:relative;min-width:0}#map{height:100%;width:100%;background:#d7e5e3}
+
+/* Tab System */
+.tabs{display:flex;border-bottom:1px solid var(--line);background:#10212b}
+.tab-btn{flex:1;background:transparent;border:none;color:var(--muted);padding:14px 10px;cursor:pointer;font-family:inherit;font-size:14px;border-bottom:2px solid transparent;transition:.2s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:bold;background:#172a36}
+.tab-content{display:none;padding:16px;overflow-y:auto;flex:1}
+.tab-content.active{display:block}
+
+.section{border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:12px;background:#142630}.section h2{font-size:14px;margin:0 0 12px;display:flex;align-items:center;gap:8px}.section h2 span{color:var(--accent)}.field{margin-bottom:12px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}.field input,.field select,.field textarea{width:100%;background:#0e1c25;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:11px;font:inherit;font-size:13px;outline:none}.field input:focus,.field select:focus{border-color:var(--accent)}.actions{display:flex;gap:7px;flex-wrap:wrap}.hint{font-size:11px;line-height:1.7;color:var(--muted);margin:9px 0 0}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{padding:11px;background:#0e1c25;border:1px solid var(--line);border-radius:11px}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{display:block;margin-top:5px;font-size:17px;direction:ltr;text-align:right;overflow-wrap:anywhere}.stat em{font-style:normal;color:var(--muted);font-size:10px}
+#featureList{display:flex;flex-direction:column;gap:7px;max-height:300px;overflow:auto}.feature{display:flex;align-items:center;gap:8px;padding:9px;border-radius:10px;background:#0e1c25;border:1px solid var(--line)}.feature .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}.feature .meta{min-width:0;flex:1}.feature b{font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.feature small{font-size:10px;color:var(--muted)}.feature button{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:16px}
+.map-badge{position:absolute;z-index:500;top:12px;left:12px;background:#10212beF;color:var(--text);border:1px solid #ffffff2a;border-radius:12px;padding:10px 13px;font-size:12px;box-shadow:0 6px 22px #0002}.map-badge strong{color:var(--accent)}.legend{position:absolute;z-index:500;bottom:18px;left:12px;background:#10212beF;border:1px solid #ffffff2a;border-radius:12px;padding:10px 12px;font-size:11px;color:var(--muted);display:flex;gap:12px}.legend div{display:flex;align-items:center;gap:5px}.legend span{display:inline-block;width:9px;height:9px;border-radius:50%}
+.toast{position:fixed;z-index:2000;bottom:20px;right:50%;transform:translateX(50%);background:#0d252d;border:1px solid var(--accent);color:var(--text);border-radius:12px;padding:12px 18px;box-shadow:0 10px 35px #0004;display:none;font-size:13px;max-width:90vw}.empty{color:var(--muted);font-size:12px;text-align:center;padding:16px 8px;border:1px dashed var(--line);border-radius:10px}
 .leaflet-control-attribution{font-size:10px!important}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#172a36;color:#edf5f6}.leaflet-popup-content{font-family:inherit;line-height:1.7}.leaflet-popup-content b{color:var(--accent)}
-@media(max-width:850px){header{height:auto;min-height:64px;padding:10px 12px;flex-wrap:wrap}.brand h1{font-size:15px}.top-actions{width:100%;overflow:auto}.top-actions .btn{white-space:nowrap}.layout{height:auto;min-height:0;display:flex;flex-direction:column-reverse}.map-wrap{height:55vh;min-height:350px}.sidebar{overflow:visible;border-left:0;border-top:1px solid var(--line)}.section{margin-bottom:10px}.map-badge{font-size:11px}.legend{bottom:10px}}
+@media(max-width:850px){header{height:auto;min-height:64px;padding:10px 12px;flex-wrap:wrap}.brand h1{font-size:15px}.top-actions{width:100%;overflow:auto}.top-actions .btn{white-space:nowrap}.layout{height:auto;min-height:0;display:flex;flex-direction:column-reverse}.map-wrap{height:55vh;min-height:350px}.sidebar{overflow:visible;border-left:0;border-top:1px solid var(--line)}.section{margin-bottom:10px}.map-badge{font-size:11px}.legend{bottom:10px;flex-wrap:wrap}}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand"><div class="logo">🌍</div><div><h1>GIS العراق</h1><p>نظام الخرائط والمعالم والحدود — نسخة تجريبية</p></div></div>
+  <div class="brand"><div class="logo">🌍</div><div><h1>GIS العراق</h1><p>نظام الخرائط والمعالم والحدود</p></div></div>
   <div class="top-actions">
-    <button class="btn primary" id="addPointBtn">＋ إضافة معلم</button>
     <button class="btn" id="drawPolygonBtn">⬡ رسم منطقة</button>
-    <button class="btn" id="importBtn">⇧ استيراد GeoJSON</button>
-    <button class="btn" id="exportBtn">⇩ تصدير GeoJSON</button>
+    <button class="btn" id="importBtn">⇧ استيراد</button>
+    <button class="btn" id="exportBtn">⇩ تصدير</button>
     <input type="file" id="fileInput" accept=".geojson,.json" hidden>
   </div>
 </header>
 <div class="layout">
   <aside class="sidebar">
-    <div class="section">
-      <h2><span>⌖</span> بحث وانتقال</h2>
-      <div class="field"><label>إحداثيات WGS84 (خط العرض، خط الطول)</label><input id="coordSearch" placeholder="33.3152, 44.3661" dir="ltr"></div>
-      <div class="actions"><button class="btn primary" id="goCoord">انتقال إلى الإحداثيات</button><button class="btn" id="iraqView">عرض العراق</button></div>
-      <p class="hint">يمكنك البحث بإحداثيات عشرية مثل 33.3152, 44.3661. البحث بالاسم يحتاج إلى اتصال بالإنترنت.</p>
+    <!-- قائمة التبويبات الفرعية -->
+    <div class="tabs">
+      <button class="tab-btn active" data-target="tab-add">إضافة معلم</button>
+      <button class="tab-btn" data-target="tab-data">البيانات</button>
+      <button class="tab-btn" data-target="tab-tools">أدوات</button>
     </div>
-    <div class="section">
-      <h2><span>▦</span> ملخص المشروع</h2>
-      <div class="stats">
-        <div class="stat"><small>إجمالي المعالم</small><strong id="pointCount">0</strong><em>نقطة</em></div>
-        <div class="stat"><small>المناطق المرسومة</small><strong id="polygonCount">0</strong><em>مضلع</em></div>
-        <div class="stat"><small>المساحة المحددة</small><strong id="areaStat">—</strong><em>كم²</em></div>
-        <div class="stat"><small>المحيط المحدد</small><strong id="perimeterStat">—</strong><em>كم</em></div>
+
+    <!-- تبويب إضافة نقطة/معلم -->
+    <div class="tab-content active" id="tab-add">
+      <div class="section" style="border-color: var(--accent);">
+        <h2><span>📍</span> تفاصيل البوينت (النقطة)</h2>
+        <div class="field"><label>اسم المكان / الشارع</label><input id="featureName" placeholder="مثال: شارع الرشيد، مول بغداد..."></div>
+        <div class="field">
+          <label>التصنيف (النوع)</label>
+          <select id="featureType">
+            <option value="دائرة حكومية">دائرة حكومية (وزارة، مديرية...)</option>
+            <option value="مركز تعليمي">مركز تعليمي (جامعة، مدرسة...)</option>
+            <option value="طريق رئيسي">طريق رئيسي</option>
+            <option value="طريق ثانوي">طريق ثانوي</option>
+            <option value="طريق فرعي">طريق فرعي</option>
+            <option value="محل تجاري">محل تجاري</option>
+            <option value="سوق">سوق</option>
+            <option value="نقطة دالة عامة">نقطة دالة عامة</option>
+          </select>
+        </div>
+        <div class="field"><label>ملاحظات إضافية</label><textarea id="featureNotes" rows="2" placeholder="أي تفاصيل أخرى..."></textarea></div>
+        <button class="btn primary" id="addPointBtn" style="width: 100%; padding: 12px; font-size: 14px;">📍 انقر هنا ثم حدد موقع النقطة على الخريطة</button>
+        <p class="hint">سيتم تلوين النقطة على الخريطة تلقائياً حسب نوع التصنيف المختار لتسهيل تمييزها.</p>
       </div>
     </div>
-    <div class="section">
-      <h2><span>＋</span> بيانات المعلم</h2>
-      <div class="field"><label>اسم المعلم</label><input id="featureName" placeholder="مثال: مدرسة أو جسر"></div>
-      <div class="field"><label>نوع المعلم</label><select id="featureType"><option>عام</option><option>مدرسة</option><option>مستشفى</option><option>مسجد</option><option>جسر</option><option>طريق</option><option>قرية</option><option>مبنى</option><option>موقع أثري</option><option>نقطة حدودية</option><option>أخرى</option></select></div>
-      <div class="field"><label>ملاحظات</label><input id="featureNotes" placeholder="ملاحظات اختيارية"></div>
-      <p class="hint">اضغط «إضافة معلم» ثم اختر موقعاً على الخريطة. تُحفظ البيانات محلياً في هذا المتصفح.</p>
+
+    <!-- تبويب البيانات والمشروع -->
+    <div class="tab-content" id="tab-data">
+      <div class="section">
+        <h2><span>▦</span> ملخص المشروع</h2>
+        <div class="stats">
+          <div class="stat"><small>النقاط المضافة</small><strong id="pointCount">0</strong><em>بوينت</em></div>
+          <div class="stat"><small>المناطق المرسومة</small><strong id="polygonCount">0</strong><em>مضلع</em></div>
+          <div class="stat"><small>المساحة</small><strong id="areaStat">—</strong><em>كم²</em></div>
+          <div class="stat"><small>المحيط</small><strong id="perimeterStat">—</strong><em>كم</em></div>
+        </div>
+      </div>
+      <div class="section">
+        <h2><span>☷</span> السجل التفصيلي</h2>
+        <div id="featureList"><div class="empty">لم تتم إضافة معالم بعد.</div></div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn small danger" id="clearBtn">مسح الكل</button>
+          <button class="btn small" id="fitBtn">توسيط العرض</button>
+        </div>
+      </div>
     </div>
-    <div class="section">
-      <h2><span>⇄</span> محول الإحداثيات</h2>
-      <div class="field"><label>الإحداثيات العشرية: خط العرض، خط الطول</label><input id="convertInput" dir="ltr" placeholder="33.3152, 44.3661"></div>
-      <div class="actions"><button class="btn primary" id="convertBtn">تحويل إلى DMS</button><button class="btn" id="copyCoords">نسخ الناتج</button></div>
-      <div class="field" style="margin-top:10px"><label>الناتج</label><textarea id="convertOutput" rows="2" readonly dir="ltr" placeholder="ستظهر النتيجة هنا"></textarea></div>
-      <p class="hint">هذه النسخة تدعم التحويل من الدرجات العشرية إلى DMS. تحويل CRS وUTM يحتاج إلى إضافة مكتبة إسقاطات واختبارها قبل الاعتماد المساحي.</p>
-    </div>
-    <div class="section">
-      <h2><span>☷</span> المعالم في المشروع</h2>
-      <div id="featureList"><div class="empty">لم تتم إضافة معالم بعد.<br>أضف نقطة أو استورد ملف GeoJSON.</div></div>
-      <div class="actions" style="margin-top:10px"><button class="btn small" id="clearBtn">مسح كل البيانات</button><button class="btn small" id="fitBtn">عرض كل المعالم</button></div>
-    </div>
-    <div class="section">
-      <h2><span>ⓘ</span> ملاحظات النسخة</h2>
-      <p class="hint">نسخة أولية قابلة للنشر على GitHub Pages. تستخدم طبقة OpenStreetMap عبر الإنترنت. احفظ نسخة احتياطية من بياناتك عبر التصدير؛ تخزين المتصفح ليس بديلاً عن قاعدة بيانات دائمة أو مزامنة سحابية.</p>
+
+    <!-- تبويب الأدوات -->
+    <div class="tab-content" id="tab-tools">
+      <div class="section">
+        <h2><span>⌖</span> انتقال للإحداثيات</h2>
+        <div class="field"><label>WGS84 (خط العرض، خط الطول)</label><input id="coordSearch" placeholder="33.3152, 44.3661" dir="ltr"></div>
+        <div class="actions"><button class="btn primary" id="goCoord">انتقال</button><button class="btn" id="iraqView">عرض العراق</button></div>
+      </div>
+      <div class="section">
+        <h2><span>⇄</span> محول الإحداثيات</h2>
+        <div class="field"><label>العشرية: خط العرض، خط الطول</label><input id="convertInput" dir="ltr" placeholder="33.3152, 44.3661"></div>
+        <div class="actions"><button class="btn primary" id="convertBtn">تحويل DMS</button><button class="btn" id="copyCoords">نسخ</button></div>
+        <div class="field" style="margin-top:10px"><textarea id="convertOutput" rows="2" readonly dir="ltr" placeholder="الناتج..."></textarea></div>
+      </div>
     </div>
   </aside>
+
   <main class="map-wrap">
     <div id="map"></div>
-    <div class="map-badge">النظام: <strong>WGS84 · EPSG:4326</strong><br>اختر أداة الرسم من الشريط العلوي</div>
-    <div class="legend"><span></span> معلم محفوظ　 <span style="background:#e5b75b"></span> منطقة مرسومة</div>
+    <div class="map-badge">النظام: <strong>WGS84 · EPSG:4326</strong></div>
+    <div class="legend">
+      <div><span style="background:var(--danger)"></span> حكومي</div>
+      <div><span style="background:var(--blue)"></span> تعليمي</div>
+      <div><span style="background:var(--gold)"></span> تجاري/سوق</div>
+      <div><span style="background:var(--gray)"></span> طريق</div>
+      <div><span style="background:var(--accent)"></span> عام</div>
+      <div><span style="background:#e5b75b; border-radius:2px; opacity:0.5;"></span> منطقة</div>
+    </div>
   </main>
 </div>
 <div class="toast" id="toast"></div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.18.0/dist/leaflet-geoman.min.js"></script>
 <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  const map = L.map('map', {preferCanvas:true}).setView([33.2,43.7],6);
+  const map = L.map('map', {preferCanvas:true}).setView([33.3152, 44.3661], 12);
+  
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    maxZoom: 19, attribution: '&copy; OpenStreetMap'
   }).addTo(map);
+  
   map.pm.addControls({position:'topleft',drawMarker:false,drawCircle:false,drawCircleMarker:false,drawPolyline:true,drawRectangle:true,drawPolygon:true,editMode:true,dragMode:true,cutPolygon:true,removalMode:true});
+  
   const featuresLayer = L.featureGroup().addTo(map);
   const drawnLayer = L.featureGroup().addTo(map);
   let addPointMode = false;
   let toastTimer;
+
+  // Tabs Logic
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      $(btn.dataset.target).classList.add('active');
+    });
+  });
+
   const showToast = msg => { const t=$('toast'); t.textContent=msg; t.style.display='block'; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.display='none',2800); };
   const safe = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const isPoint = layer => layer instanceof L.Marker && !(layer instanceof L.CircleMarker);
+  const isPoint = layer => layer instanceof L.CircleMarker || layer instanceof L.Marker;
+
+  // تحديد اللون حسب نوع المكان
+  function getColorForType(type) {
+    if (type.includes('حكومية')) return 'var(--danger)'; // أحمر
+    if (type.includes('تجاري') || type.includes('سوق')) return 'var(--gold)'; // ذهبي
+    if (type.includes('تعليمي')) return 'var(--blue)'; // أزرق
+    if (type.includes('طريق')) return 'var(--gray)'; // رصاصي
+    return 'var(--accent)'; // أخضر افتراضي
+  }
+
+  // إضافة بوينت دائرية مخصصة
   function addPoint(latlng, props={}) {
-    const name = props.name || 'معلم جديد';
-    const marker = L.marker(latlng, {title:name});
-    marker.featureProps = {name, type:props.type || 'عام', notes:props.notes || '', id:props.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random()))};
-    marker.bindPopup(popupHtml(marker.featureProps));
+    const name = props.name || 'مكان جديد';
+    const type = props.type || 'نقطة دالة عامة';
+    const color = getColorForType(type);
+    
+    // استخدام CircleMarker ليكون النقطة (بوينت) واضحة
+    const marker = L.circleMarker(latlng, {
+        radius: 8,
+        color: '#10212b', // إطار خارجي داكن للنقطة
+        weight: 2,
+        fillColor: color,
+        fillOpacity: 1
+    });
+
+    marker.featureProps = {name, type, notes:props.notes || '', id:props.id || String(Date.now())};
+    marker.bindPopup(`<b>${safe(name)}</b><br>التصنيف: ${safe(type)}<br>${props.notes ? 'ملاحظات: '+safe(props.notes)+'<br>':''}`);
     marker.on('click', () => { if(addPointMode) return; });
     featuresLayer.addLayer(marker);
     refreshUI();
     return marker;
   }
-  function popupHtml(p) { return `<b>${safe(p.name)}</b><br>النوع: ${safe(p.type)}<br>${p.notes ? 'ملاحظات: '+safe(p.notes)+'<br>':''}<small>${safe(p.id)}</small>`; }
+
   function addPolygon(layer, props={}) {
-    layer.featureProps = {name:props.name || 'منطقة مرسومة', type:'منطقة', notes:props.notes || '', id:props.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random()))};
+    layer.featureProps = {name:props.name || 'منطقة مرسومة', type:'منطقة', notes:props.notes || '', id:props.id || String(Date.now())};
     layer.setStyle({color:'#e5b75b',weight:3,fillColor:'#e5b75b',fillOpacity:.16});
-    layer.bindPopup(popupHtml(layer.featureProps));
+    layer.bindPopup(`<b>${safe(layer.featureProps.name)}</b>`);
     drawnLayer.addLayer(layer);
     refreshUI();
   }
+
   function allLayers(){ return [...featuresLayer.getLayers(), ...drawnLayer.getLayers()]; }
+
   function refreshUI() {
     const points=featuresLayer.getLayers(), polygons=drawnLayer.getLayers();
     $('pointCount').textContent=points.length;
     $('polygonCount').textContent=polygons.length;
     $('featureList').innerHTML='';
-    if(!points.length && !polygons.length) $('featureList').innerHTML='<div class="empty">لم تتم إضافة معالم بعد.<br>أضف نقطة أو استورد ملف GeoJSON.</div>';
+    if(!points.length && !polygons.length) $('featureList').innerHTML='<div class="empty">لا توجد بيانات حالياً.</div>';
+    
     [...points,...polygons].forEach(layer=>{
       const p=layer.featureProps || {};
+      let dotColor = isPoint(layer) ? getColorForType(p.type) : '#e5b75b';
+      let dotShape = isPoint(layer) ? '50%' : '2px'; // دائرة للنقطة ومربع للمنطقة
+
       const div=document.createElement('div'); div.className='feature';
-      div.innerHTML=`<span class="dot" style="background:${isPoint(layer)?'#40c3ad':'#e5b75b'}"></span><div class="meta"><b>${safe(p.name || 'عنصر بلا اسم')}</b><small>${safe(p.type || 'عنصر')}</small></div><button title="إظهار على الخريطة">⌖</button>`;
-      div.querySelector('button').onclick=()=>{ if(isPoint(layer)) map.setView(layer.getLatLng(),15); else map.fitBounds(layer.getBounds(),{padding:[30,30]}); layer.openPopup(); };
+      div.innerHTML=`<span class="dot" style="background:${dotColor}; border-radius:${dotShape}"></span><div class="meta"><b>${safe(p.name || 'بدون اسم')}</b><small>${safe(p.type)}</small></div><button title="الذهاب للموقع">⌖</button>`;
+      div.querySelector('button').onclick=()=>{ 
+          if(isPoint(layer)) { map.setView(layer.getLatLng(), 16); layer.openPopup(); }
+          else { map.fitBounds(layer.getBounds(),{padding:[30,30]}); layer.openPopup(); }
+      };
       $('featureList').appendChild(div);
     });
-    $('areaStat').textContent='—'; $('perimeterStat').textContent='—';
+    $('areaStat').textContent='—';$('perimeterStat').textContent='—';
   }
+
   function updatePolygonStats(layer) {
     try {
       const gj=layer.toGeoJSON();
       const area=turf.area(gj)/1e6;
       const perimeter=turf.length(turf.polygonToLine(gj),{units:'kilometers'});
-      $('areaStat').textContent=area.toLocaleString('en-US',{maximumFractionDigits:3});
-      $('perimeterStat').textContent=perimeter.toLocaleString('en-US',{maximumFractionDigits:3});
-    } catch(e) { $('areaStat').textContent='—'; $('perimeterStat').textContent='—'; }
+      $('areaStat').textContent=area.toLocaleString('en-US',{maximumFractionDigits:3});$('perimeterStat').textContent=perimeter.toLocaleString('en-US',{maximumFractionDigits:3});
+    } catch(e) {}
   }
+
   map.on('pm:create', e => {
-    if(e.shape==='Marker') {
-      const name=$('featureName').value.trim() || 'معلم جديد';
-      addPoint(e.layer.getLatLng(),{name,type:$('featureType').value,notes:$('featureNotes').value});
-      map.removeLayer(e.layer);
-      showToast('تمت إضافة المعلم');
-    } else if(e.layer instanceof L.Polygon || e.layer instanceof L.Rectangle) {
-      addPolygon(e.layer);
-      updatePolygonStats(e.layer);
-      e.layer.on('click',()=>updatePolygonStats(e.layer));
-      showToast('تم رسم المنطقة');
+    if(e.layer instanceof L.Polygon || e.layer instanceof L.Rectangle) {
+      addPolygon(e.layer); updatePolygonStats(e.layer);
+      e.layer.on('click',()=>updatePolygonStats(e.layer)); showToast('تم رسم المنطقة');
     } else {
       drawnLayer.addLayer(e.layer);
-      e.layer.featureProps={name:'خط جديد',type:'خط',notes:'',id:String(Date.now())};
+      e.layer.featureProps={name:'خط جديد',type:'مسار/خط',notes:'',id:String(Date.now())};
       refreshUI(); showToast('تم رسم الخط');
     }
   });
+
   map.on('pm:edit', e => { refreshUI(); if(e.layer instanceof L.Polygon) updatePolygonStats(e.layer); });
-  map.on('pm:remove', e => { featuresLayer.removeLayer(e.layer); drawnLayer.removeLayer(e.layer); refreshUI(); showToast('تم حذف العنصر من الخريطة'); });
-  $('addPointBtn').onclick=()=>{addPointMode=true; map.pm.disableDraw(); showToast('انقر على الخريطة لتحديد موقع المعلم'); map.once('click',e=>{ if(!addPointMode)return; addPoint(e.latlng,{name:$('featureName').value.trim()||'معلم جديد',type:$('featureType').value,notes:$('featureNotes').value}); addPointMode=false; showToast('تمت إضافة المعلم'); });};
-  $('drawPolygonBtn').onclick=()=>{addPointMode=false; map.pm.enableDraw('Polygon',{snappable:true,templineStyle:{color:'#e5b75b'},hintlineStyle:{color:'#e5b75b',dashArray:[5,5]}}); showToast('انقر لإضافة رؤوس المنطقة ثم انقر على أول نقطة أو أنهِ الرسم');};
-  $('goCoord').onclick=()=>{const v=$('coordSearch').value.trim().split(/[,\s]+/).map(Number); if(v.length<2||!Number.isFinite(v[0])||!Number.isFinite(v[1])||Math.abs(v[0])>90||Math.abs(v[1])>180){showToast('أدخل خط العرض ثم خط الطول بصيغة صحيحة');return;} map.setView([v[0],v[1]],14); L.circleMarker([v[0],v[1]],{radius:7,color:'#ef6262',fillOpacity:.8}).addTo(map).bindPopup(`الإحداثيات: ${v[0]}, ${v[1]}`).openPopup();};
-  $('iraqView').onclick=()=>map.setView([33.2,43.7],6);
+  map.on('pm:remove', e => { featuresLayer.removeLayer(e.layer); drawnLayer.removeLayer(e.layer); refreshUI(); showToast('تم الحذف'); });
+  
+  // زر إضافة بوينت
+  $('addPointBtn').onclick=()=>{
+      addPointMode=true; map.pm.disableDraw(); 
+      showToast('انقر على الخريطة لتحديد موقع النقطة بدقة'); 
+      $('map').style.cursor = 'crosshair';
+      map.once('click', e => { 
+          if(!addPointMode)return; 
+          addPoint(e.latlng,{name:$('featureName').value.trim()||'بدون اسم',type:$('featureType').value,notes:$('featureNotes').value}); 
+          addPointMode=false; 
+          $('map').style.cursor = '';
+          showToast('تمت إضافة النقطة (البوينت)'); 
+          $('featureName').value='';$('featureNotes').value='';
+      });
+  };
+
+  $('drawPolygonBtn').onclick=()=>{addPointMode=false; map.pm.enableDraw('Polygon',{snappable:true,templineStyle:{color:'#e5b75b'},hintlineStyle:{color:'#e5b75b',dashArray:[5,5]}}); showToast('انقر لإضافة نقاط المنطقة الجغرافية');};
+  $('goCoord').onclick=()=>{const v=$('coordSearch').value.trim().split(/[,\s]+/).map(Number); if(v.length<2||!Number.isFinite(v[0])){showToast('خطأ بالصيغة');return;} map.setView([v[0],v[1]],16); addPoint([v[0],v[1]], {name:'نقطة بحث', type:'نقطة دالة عامة'}).openPopup();};
+  $('iraqView').onclick=()=>map.setView([33.3152, 44.3661], 6);
   function toDMS(value, lat) { const hemi=lat?(value>=0?'N':'S'):(value>=0?'E':'W'); const a=Math.abs(value),d=Math.floor(a),mFloat=(a-d)*60,m=Math.floor(mFloat),s=(mFloat-m)*60;return `${d}° ${m}' ${s.toFixed(2)}" ${hemi}`; }
-  $('convertBtn').onclick=()=>{const v=$('convertInput').value.trim().split(/[,\s]+/).map(Number);if(v.length<2||!Number.isFinite(v[0])||!Number.isFinite(v[1])||Math.abs(v[0])>90||Math.abs(v[1])>180){showToast('تحقق من إدخال خط العرض وخط الطول');return;}$('convertOutput').value=`Latitude: ${toDMS(v[0],true)}\nLongitude: ${toDMS(v[1],false)}`;};
-  $('copyCoords').onclick=async()=>{try{await navigator.clipboard.writeText($('convertOutput').value);showToast('تم نسخ الإحداثيات');}catch(e){$('convertOutput').select();document.execCommand('copy');showToast('تم نسخ الناتج');}};
-  $('importBtn').onclick=()=>$('fileInput').click();
-  $('fileInput').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const gj=JSON.parse(await file.text());const layer=L.geoJSON(gj,{pointToLayer:(f,ll)=>L.marker(ll),onEachFeature:(f,l)=>{const p=f.properties||{};l.featureProps={name:p.name||p.title||'معلم مستورد',type:p.type||p.category||'مستورد',notes:p.notes||'',id:p.id||String(Date.now()+Math.random())};if(l instanceof L.Polygon||l instanceof L.Rectangle)addPolygon(l,l.featureProps);else if(l instanceof L.Marker){l.bindPopup(popupHtml(l.featureProps));featuresLayer.addLayer(l);}else{l.featureProps.type='خط';drawnLayer.addLayer(l);}}});refreshUI();showToast('تم استيراد الملف بنجاح');}catch(err){showToast('تعذر قراءة الملف. تأكد أنه GeoJSON صالح.');}e.target.value='';};
-  $('exportBtn').onclick=()=>{const all=[];featuresLayer.eachLayer(l=>{const f=l.toGeoJSON();f.properties={...(f.properties||{}),...(l.featureProps||{})};all.push(f);});drawnLayer.eachLayer(l=>{const f=l.toGeoJSON();f.properties={...(f.properties||{}),...(l.featureProps||{})};all.push(f);});if(!all.length){showToast('لا توجد بيانات لتصديرها');return;}const out={type:'FeatureCollection',features:all};const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/geo+json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gis-iraq.geojson';a.click();URL.revokeObjectURL(url);showToast('بدأ تصدير GeoJSON');};
-  $('clearBtn').onclick=()=>{if(!confirm('هل تريد حذف جميع المعالم والمناطق من المشروع؟ ينصح بتصدير نسخة احتياطية أولاً.'))return;featuresLayer.clearLayers();drawnLayer.clearLayers();localStorage.removeItem('gis-iraq-data');refreshUI();showToast('تم مسح بيانات الخريطة');};
-  $('fitBtn').onclick=()=>{const ls=allLayers();if(!ls.length){map.setView([33.2,43.7],6);return;}const group=L.featureGroup(ls);map.fitBounds(group.getBounds().pad(.15));};
-  // Local persistence: GeoJSON plus feature metadata.
+  $('convertBtn').onclick=()=>{const v=$('convertInput').value.trim().split(/[,\s]+/).map(Number);if(v.length<2\vert{}\vert{}!Number.isFinite(v[0])){return;}$('convertOutput').value=`Latitude: ${toDMS(v[0],true)}\nLongitude: ${toDMS(v[1],false)}`;};
+  $('copyCoords').onclick=async()=>{try{await navigator.clipboard.writeText($('convertOutput').value);showToast('تم النسخ');}catch(e){}};
+  $('importBtn').onclick=()=>$('fileInput').click();$('fileInput').onchange=async e=>{
+      const file=e.target.files[0];if(!file)return;
+      try{
+          const gj=JSON.parse(await file.text());
+          L.geoJSON(gj,{
+              pointToLayer:(f,ll)=>{
+                  const t = f.properties.type || 'نقطة دالة عامة';
+                  return L.circleMarker(ll, { radius: 8, color: '#10212b', weight: 2, fillColor: getColorForType(t), fillOpacity: 1 });
+              },
+              onEachFeature:(f,l)=>{
+                  const p=f.properties||{};l.featureProps={name:p.name||'مستورد',type:p.type||'مستورد',notes:p.notes||'',id:p.id||String(Date.now())};
+                  if(l instanceof L.Polygon||l instanceof L.Rectangle) addPolygon(l,l.featureProps);
+                  else if(isPoint(l)){ l.bindPopup(`<b>${safe(l.featureProps.name)}</b>`); featuresLayer.addLayer(l); }
+                  else{ l.featureProps.type='مسار'; drawnLayer.addLayer(l); }
+              }
+          });
+          refreshUI(); showToast('تم الاستيراد');
+      }catch(err){showToast('ملف غير صالح');} e.target.value='';
+  };
+  $('exportBtn').onclick=()=>{
+      const all=[];
+      allLayers().forEach(l=>{const f=l.toGeoJSON();f.properties={...(f.properties||{}),...(l.featureProps||{})};all.push(f);});
+      if(!all.length){showToast('لا توجد بيانات');return;}
+      const blob=new Blob([JSON.stringify({type:'FeatureCollection',features:all},null,2)],{type:'application/geo+json;charset=utf-8'});
+      const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gis-iraq-data.geojson';a.click();URL.revokeObjectURL(url);
+  };
+  $('clearBtn').onclick=()=>{if(!confirm('حذف جميع البيانات بشكل نهائي؟'))return;featuresLayer.clearLayers();drawnLayer.clearLayers();localStorage.removeItem('gis-iraq-data');refreshUI();};
+  $('fitBtn').onclick=()=>{const ls=allLayers();if(!ls.length)return; map.fitBounds(L.featureGroup(ls).getBounds().pad(.15));};
+  
   function saveLocal(){try{const data=[];allLayers().forEach(l=>{const f=l.toGeoJSON();f.properties={...(f.properties||{}),...(l.featureProps||{})};data.push(f);});localStorage.setItem('gis-iraq-data',JSON.stringify({type:'FeatureCollection',features:data}));}catch(e){}}
-  function loadLocal(){try{const raw=localStorage.getItem('gis-iraq-data');if(!raw)return;const gj=JSON.parse(raw);L.geoJSON(gj,{pointToLayer:(f,ll)=>L.marker(ll),onEachFeature:(f,l)=>{const p=f.properties||{};l.featureProps={name:p.name||'معلم محفوظ',type:p.type||'عام',notes:p.notes||'',id:p.id||String(Date.now()+Math.random())};if(l instanceof L.Marker){l.bindPopup(popupHtml(l.featureProps));featuresLayer.addLayer(l);}else if(l instanceof L.Polygon){addPolygon(l,l.featureProps);}else{drawnLayer.addLayer(l);}}});refreshUI();}catch(e){console.warn('Local data could not be loaded',e);}}
-  const originalRefresh=refreshUI;
+  function loadLocal(){try{const raw=localStorage.getItem('gis-iraq-data');if(!raw)return;const gj=JSON.parse(raw);L.geoJSON(gj,{pointToLayer:(f,ll)=>{const t=f.properties.type||'نقطة دالة عامة';return L.circleMarker(ll, {radius:8,color:'#10212b',weight:2,fillColor:getColorForType(t),fillOpacity:1});},onEachFeature:(f,l)=>{const p=f.properties||{};l.featureProps={name:p.name||'محفوظ',type:p.type||'نقطة',notes:p.notes||'',id:p.id||String(Date.now())};if(l instanceof L.Polygon){addPolygon(l,l.featureProps);}else if(isPoint(l)){l.bindPopup(`<b>${safe(l.featureProps.name)}</b><br>${safe(l.featureProps.type)}`);featuresLayer.addLayer(l);}else{drawnLayer.addLayer(l);}}});refreshUI();}catch(e){}}
+  
   map.on('pm:create pm:edit pm:remove',()=>setTimeout(saveLocal,100));
   const observer=new MutationObserver(()=>saveLocal()); observer.observe($('featureList'),{childList:true});
   loadLocal();
