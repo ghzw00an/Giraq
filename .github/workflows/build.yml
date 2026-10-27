@@ -1,3 +1,4 @@
+# ضع هذا الملف في المستودع باسم .github/workflows/build.yml (إذا رفعت الملف المضغوط كما هو)
 name: Build APK
 on:
   push:
@@ -14,6 +15,15 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      - name: Download Leaflet (offline map files)
+        continue-on-error: true
+        run: |
+          D=poi-exporter-android/app/src/main/python/poi_exporter/static/leaflet
+          mkdir -p $D/images
+          B=https://unpkg.com/leaflet@1.9.4/dist
+          curl -fsSL $B/leaflet.js -o $D/leaflet.js
+          curl -fsSL $B/leaflet.css -o $D/leaflet.css
+          for f in layers.png layers-2x.png marker-icon.png marker-icon-2x.png marker-shadow.png; do curl -fsSL $B/images/$f -o $D/images/$f; done
       - name: Accept Android licenses
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
       - uses: gradle/actions/setup-gradle@v4
