@@ -55,9 +55,10 @@ jobs:
       - name: Accept Android licenses
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
-      # بناء النسخة النهائية Release مع تخطي فحص Lint لتجنب الخطأ
+      # بناء النسخة النهائية Release 
+      # (تم إزالة --parallel وتخطي فحص Lint لتجنب أخطاء Kotlin و Gradle)
       - name: Build Release APK
-        run: gradle assembleRelease -x lint -x lintVitalRelease --no-daemon --parallel --build-cache --stacktrace
+        run: gradle assembleRelease -x lint -x lintVitalRelease --no-daemon --build-cache --stacktrace
 
       # توقيع التطبيق باستخدام الأسرار
       - name: Sign Release APK
