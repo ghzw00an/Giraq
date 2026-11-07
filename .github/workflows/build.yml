@@ -1,6 +1,5 @@
 name: Build POI Exporter APK
 
-# التشغيل اليدوي فقط
 on:
   workflow_dispatch:
 
@@ -55,27 +54,45 @@ jobs:
       - name: Accept Android licenses
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
-      # بناء النسخة النهائية Release 
       - name: Build Release APK
         run: gradle assembleRelease -x lint -x lintVitalRelease --no-daemon --build-cache --stacktrace
 
-      # توقيع التطبيق باستخدام الأسرار والإصدار الحديث من أدوات البناء
+      # توقيع التطبيق مباشرة بأدوات أندرويد الرسمية مع اكتشاف أحدث إصدار تلقائياً
       - name: Sign Release APK
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-          buildToolsVersion: 34.0.0
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          ALIAS: ${{ secrets.ALIAS }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          # 1. تحديد أحدث إصدار من أدوات البناء المثبتة على الخادم تلقائياً
+          BUILD_TOOLS_DIR="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)"
+          echo "Using build-tools from: $BUILD_TOOLS_DIR"
 
-      # رفع التطبيق النهائي الموقّع
+          # 2. استخراج ملف المفتاح السري من النص المشفر
+          echo "$SIGNING_KEY" | tr -d '[:space:]' | base64 -d > release.keystore
+
+          # 3. العثور على ملف الـ APK غير الموقّع
+          UNSIGNED_APK=$(find app/build/outputs/apk/release -name "*.apk" | head -n 1)
+          echo "Found unsigned APK: $UNSIGNED_APK"
+
+          # 4. محاذاة الملف (zipalign) وتوقيعه رسمياً (apksigner)
+          "$BUILD_TOOLS_DIR/zipalign" -v -p 4 "$UNSIGNED_APK" app-aligned.apk
+          "$BUILD_TOOLS_DIR/apksigner" sign \
+            --ks release.keystore \
+            --ks-key-alias "$ALIAS" \
+            --ks-pass "pass:$KEY_STORE_PASSWORD" \
+            --key-pass "pass:$KEY_PASSWORD" \
+            --out POIExporter-release-signed.apk \
+            app-aligned.apk
+
+          # 5. حذف المفتاح المؤقت بعد انتهاء التوقيع للأمان
+          rm -f release.keystore app-aligned.apk
+
       - name: Upload Signed APK
         uses: actions/upload-artifact@v4
         with:
           name: POIExporter-Release-${{ github.sha }}
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          path: POIExporter-release-signed.apk
           if-no-files-found: error
           retention-days: 7
