@@ -6,14 +6,16 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate Keystore Automatically
-        # سيتم إنشاء المفتاح بكلمة مرور "password123" واسم "my-alias"
+      - name: Generate Keystore
         run: |
+          # إنشاء المفتاح
           keytool -genkey -v -keystore my-app-key.keystore -alias my-alias -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Developer, O=My App, C=US" -storepass password123 -keypass password123
-          base64 my-app-key.keystore > keystore-base64.txt
-
-      - name: Upload Base64 text as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: keystore-secret-text
-          path: keystore-base64.txt
+          
+          # تحويل المفتاح إلى نص متصل بدون فواصل
+          BASE64_KEY=$(base64 -w 0 my-app-key.keystore)
+          
+          # طباعة النص مباشرة في صفحة الملخص (Summary) لنسخه بسهولة
+          echo "### تفضل، هذا هو النص السري الخاص بك (انسخه كاملاً):" >> $GITHUB_STEP_SUMMARY
+          echo '```text' >> $GITHUB_STEP_SUMMARY
+          echo "$BASE64_KEY" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
