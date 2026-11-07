@@ -1,0 +1,19 @@
+name: Generate Keystore (Temporary)
+
+on: workflow_dispatch
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Keystore Automatically
+        # سيتم إنشاء المفتاح بكلمة مرور "password123" واسم "my-alias"
+        run: |
+          keytool -genkey -v -keystore my-app-key.keystore -alias my-alias -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Developer, O=My App, C=US" -storepass password123 -keypass password123
+          base64 my-app-key.keystore > keystore-base64.txt
+
+      - name: Upload Base64 text as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: keystore-secret-text
+          path: keystore-base64.txt
