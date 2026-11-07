@@ -56,11 +56,10 @@ jobs:
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
       # بناء النسخة النهائية Release 
-      # (تم إزالة --parallel وتخطي فحص Lint لتجنب أخطاء Kotlin و Gradle)
       - name: Build Release APK
         run: gradle assembleRelease -x lint -x lintVitalRelease --no-daemon --build-cache --stacktrace
 
-      # توقيع التطبيق باستخدام الأسرار
+      # توقيع التطبيق باستخدام الأسرار والإصدار الحديث من أدوات البناء
       - name: Sign Release APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
@@ -70,6 +69,7 @@ jobs:
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
+          buildToolsVersion: 34.0.0
 
       # رفع التطبيق النهائي الموقّع
       - name: Upload Signed APK
